@@ -7,8 +7,8 @@
 #include "Types.h"
 
 int main () {
-//    std::ifstream f("../test/array_test1.data");
-    std::ofstream debugFile("../debug");
+//    std::ifstream f("../test/gcd.data");
+//    std::ofstream debugFile("../debug");
     Preprocessor preprocessor(std::cin);
     preprocessor.preprocess();
     InstructionFetcher instructionFetcher;

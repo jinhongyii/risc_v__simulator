@@ -7,7 +7,7 @@
 #include "Types.h"
 
 int main () {
-//    std::ifstream f("../test/array_test1.data");
+//    std::ifstream f("../test/pi.data");
 //    std::ofstream debugFile("../debug");
     Preprocessor preprocessor(std::cin);
     std::ios::sync_with_stdio(false);

@@ -7,7 +7,7 @@
 #include "Types.h"
 
 int main () {
-    Preprocessor preprocessor("../sample.data");
+    Preprocessor preprocessor;
     preprocessor.preprocess();
     InstructionFetcher instructionFetcher;
     Decoder decoder;

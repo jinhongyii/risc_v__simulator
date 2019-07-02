@@ -8,9 +8,9 @@
 #include <fstream>
 #include "Executor.h"
 class Preprocessor {
-    std::fstream f;
+
 public:
-    Preprocessor(const std::string& file_name):f(file_name){
+    Preprocessor(){
     
     }
     void preprocess();

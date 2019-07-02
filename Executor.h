@@ -6,16 +6,23 @@
 #define RISC_V__SIMULATOR_EXECUTOR_H
 
 #include <cstring>
+#include <list>
 #include "Types.h"
 
 extern int pc;
 extern int reg[32];
 extern char memory[4194304];
+extern std::list<int> regToChange;
 class Executor {
 
 public:
-    Instruction buf;
-    void execute( Instruction inst);
+    Instruction buf{};
+    bool busy=false;
+    bool ready=true;
+    Executor(){
+        buf.valid=false;
+    }
+    void execute (Instruction inst , bool busy , int &instruction , bool ready);
 };
 
 

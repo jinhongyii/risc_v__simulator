@@ -11,8 +11,13 @@
 class MemoryAccess {
 
 public:
-    Instruction buf;
-    void mem( Instruction inst);
+    bool busy=false;
+    bool ready=true;
+    Instruction buf{};
+    MemoryAccess(){
+        buf.valid=false;
+    }
+    void mem (Instruction &inst , bool busy , bool ready);
 };
 
 

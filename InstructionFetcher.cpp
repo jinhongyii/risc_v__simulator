@@ -4,7 +4,13 @@
 
 #include "InstructionFetcher.h"
 
-void InstructionFetcher::IF () {
-   
-        memcpy(&buf,memory+pc,4);
+void InstructionFetcher::IF (bool busy) {
+    if (busy) {
+        
+        return;
+    }
+    memcpy(&buf , memory + pc , 4);
+    this->pc_=pc;
+    pc+=4;
+    ready=true;
 }

@@ -10,9 +10,11 @@
 
 class InstructionFetcher {
 public:
-    int buf;
+    int buf=0;
+    int pc_;
+    bool ready=false;
     InstructionFetcher()= default;
-    void IF();
+    void IF (bool busy);
 };
 
 

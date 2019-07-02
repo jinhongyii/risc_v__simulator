@@ -219,38 +219,90 @@ Types getType (unsigned instruction) {
     return type;
 }
 
-void Decoder::decode (unsigned instruction) {
+bool find(const std::list<int>& ls,int target){
+    for (auto i:ls) {
+        if (i == target) {
+            return true;
+        }
+    }
+    return false;
+}
+void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
+    this->busy=false;
+    if (!ready) {
+        this->ready=false;
+        return;
+    }
+    if (busy) {
+        this->busy=true;
+        return;
+    }
+    if (instruction == 0) {
+        this->buf.valid=false;
+        return;
+    }
+    
     Instruction inst;
     inst.type=getType(instruction);
     switch (inst.type) {
         case R_type_:
             R_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.rd,inst.r_type);
-            inst.reg1_val=reg[inst.rs1];
-            inst.reg2_val=reg[inst.rs2];
+            if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
+                inst.reg1_val = reg[inst.rs1];
+                inst.reg2_val = reg[inst.rs2];
+                regToChange.push_back(inst.rd);
+            } else {
+                this->busy=true;
+                this->ready=false;
+                return;
+            }
             break;
         case I_type_ :
             I_type_decoder::decode(instruction,inst.rs1,inst.rd,inst.immediate,inst.i_type);
-            inst.reg1_val=reg[inst.rs1];
+            if(!find(regToChange,inst.rs1)) {
+                inst.reg1_val = reg[inst.rs1];
+                regToChange.push_back(inst.rd);
+            } else {
+                this->busy=true;
+                this->ready=false;
+                return;
+            }
             break;
         case S_type_:
             S_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.s_type);
-            inst.reg1_val=reg[inst.rs1];
-            inst.reg2_val=reg[inst.rs2];
+            if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
+                inst.reg1_val = reg[inst.rs1];
+                inst.reg2_val = reg[inst.rs2];
+            } else {
+                this->busy=true;
+                this->ready=false;
+                return;
+            }
             break;
         case B_type_:
             B_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.b_type);
-            inst.reg1_val=reg[inst.rs1];
-            inst.reg2_val=reg[inst.rs2];
+            if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
+                inst.reg1_val = reg[inst.rs1];
+                inst.reg2_val = reg[inst.rs2];
+            } else {
+                this->busy=true;
+                this->ready=false;
+                return;
+            }
             break;
         case U_type_:
             U_type_decoder::decode(instruction,inst.immediate,inst.rd,inst.u_type);
+            regToChange.push_back(inst.rd);
             break;
         case J_type_:
             J_type_decoder::decode(instruction,inst.immediate,inst.rd);
+            regToChange.push_back(inst.rd);
             break;
     }
-    
     buf=inst;
+    buf.pc=pc;
+    this->busy=false;
+    this->ready=true;
 }
 std::string type_name[6]{"R_type","I_type","S_type","B_type","U_type","J_type"};
 std::string R_type_name[]={"ADD","SUB","SLL","SLT","SLTU","XOR","SRL","SRA","OR","AND"};

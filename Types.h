@@ -46,7 +46,7 @@ struct Instruction{
     B_type b_type;
     U_type u_type;
     J_type j_type;
-    int rs1,rs2,rd,immediate,result,reg1_val,reg2_val;
+    int rs1,rs2,rd,immediate,result,reg1_val,reg2_val,pc,valid=true;
     std::string to_string(){
         std::stringstream sstream;
         switch (type) {
@@ -78,6 +78,7 @@ struct Instruction{
                 sstream<<" rd:"<<regname[rd]<<" immediate:"<<std::hex<<immediate;
                 break;
         }
+        sstream<<" pc:"<<std::hex<<this->pc;
         return sstream.str();
         
     }
@@ -109,8 +110,13 @@ public:
 Types getType (unsigned instruction);
 class Decoder{
 public:
-    Instruction buf;
-    void decode (unsigned instruction);
+    Instruction buf{};
+    bool busy=false;
+    bool ready=true;
+    Decoder(){
+        buf.valid=false;
+    }
+    void decode (unsigned instruction , bool busy , int pc , bool ready);
 };
 
 #endif //RISC_V__SIMULATOR_TYPES_H

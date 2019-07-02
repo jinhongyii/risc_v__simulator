@@ -4,7 +4,22 @@
 
 #include "Executor.h"
 
-void Executor::execute (Instruction inst) {
+void Executor::execute (Instruction inst , bool busy , int &instruction , bool ready) {
+    this->busy=false;
+    if (!ready) {
+        this->ready=false;
+        return;
+    }
+    if (busy) {
+        this->busy=true;
+        return;
+    }
+    if (inst.valid == false) {
+        buf=inst;
+        return;
+    }
+    
+    
     switch (inst.type) {
         case R_type_: {
             switch (inst.r_type) {
@@ -46,7 +61,7 @@ void Executor::execute (Instruction inst) {
                     break;
             }
         }
-            pc += 4;
+            
             break;
         case I_type_: {
             switch (inst.i_type) {
@@ -88,8 +103,9 @@ void Executor::execute (Instruction inst) {
                 }
                     break;
                 case JALR:
-                    inst.result = pc + 4;
+                    inst.result = inst.pc + 4;
                     pc = (inst.immediate + inst.reg1_val) & (-2);
+                    instruction=0;
                     break;
                 case LW:
                 case LH:
@@ -100,72 +116,62 @@ void Executor::execute (Instruction inst) {
                     break;
         
             }
-    
-            if (inst.i_type != JALR) {
-                pc += 4;
-            }
         }
             break;
         case U_type_:
             if (inst.u_type == LUI) {
                 inst.result = inst.immediate ;
             } else {
-                inst.result = pc + inst.immediate;
+                inst.result = inst.pc + inst.immediate;
             }
-            pc += 4;
+            
             break;
         case J_type_:
-            inst.result = pc + 4;
-            pc += inst.immediate;
-            
+            inst.result = inst.pc + 4;
+            pc = inst.pc+inst.immediate;
+            instruction=0;
             break;
         case B_type_:
             switch (inst.b_type) {
                 case BEQ:
                     if (inst.reg1_val == inst.reg2_val) {
-                        pc += inst.immediate;
-                    } else {
-                        pc+=4;
+                        pc = inst.pc+inst.immediate;
+                        instruction=0;
                     }
                     break;
                 case BNE:
                     if (inst.reg1_val != inst.reg2_val) {
-                        pc += inst.immediate;
-                    } else {
-                        pc+=4;
+                        pc = inst.pc+inst.immediate;
+                        instruction=0;
                     }
                     break;
                 case BLT:
                     if (inst.reg1_val < inst.reg2_val) {
-                        pc += inst.immediate;
-                    } else {
-                        pc+=4;
+                        pc = inst.pc+inst.immediate;
+                        instruction=0;
                     }
                     break;
                 case BLTU: {
                     unsigned rs1u = inst.reg1_val;
                     unsigned rs2u = inst.reg2_val;
                     if (rs1u < rs2u) {
-                        pc += inst.immediate;
-                    } else {
-                        pc+=4;
+                        pc = inst.pc+inst.immediate;
+                        instruction=0;
                     }
                 }
                     break;
                 case BGE:
                     if (inst.reg1_val >= inst.reg2_val) {
-                        pc += inst.immediate;
-                    } else {
-                        pc+=4;
+                        pc = inst.pc+inst.immediate;
+                        instruction=0;
                     }
                     break;
                 case BGEU: {
                     unsigned rs1u = inst.reg1_val;
                     unsigned rs2u = inst.reg2_val;
                     if (rs1u >= rs2u) {
-                        pc += inst.immediate;
-                    } else {
-                        pc+=4;
+                        pc = inst.pc+inst.immediate;
+                        instruction=0;
                     }
                 }
                     break;
@@ -173,13 +179,14 @@ void Executor::execute (Instruction inst) {
             break;
         case S_type_:
             inst.immediate+=inst.reg1_val;
-            pc+=4;
+            
             break;
     }
     reg[0]=0;
     buf=inst;
-    
+    this->ready=true;
 }
 int pc;
 int reg[32];
 char memory[4194304];
+std::list<int> regToChange;

@@ -11,7 +11,8 @@
 #include "Executor.h"
 class WriteBack {
 public:
-    void wb (const Instruction& inst);
+    bool busy=false;
+    void wb (const Instruction &inst , bool ready);
 };
 
 

@@ -117,6 +117,7 @@ void Executor::execute (Instruction inst) {
         case J_type_:
             reg[inst.rd] = pc + 4;
             pc += inst.immediate;
+            
             break;
         case B_type_:
             switch (inst.b_type) {
@@ -182,3 +183,5 @@ void Executor::execute (Instruction inst) {
 int pc;
 int reg[32];
 char memory[4194304];
+bool data_hazard=false;
+bool structure_hazard=false;

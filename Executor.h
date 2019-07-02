@@ -7,6 +7,8 @@
 
 #include <cstring>
 #include "Types.h"
+extern bool data_hazard;
+extern bool structure_hazard;
 extern int pc;
 extern int reg[32];
 extern char memory[4194304];

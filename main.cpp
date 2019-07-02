@@ -10,6 +10,8 @@ int main () {
 //    std::ifstream f("../test/array_test1.data");
 //    std::ofstream debugFile("../debug");
     Preprocessor preprocessor(std::cin);
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(0);
     preprocessor.preprocess();
     InstructionFetcher instructionFetcher;
     Decoder decoder;

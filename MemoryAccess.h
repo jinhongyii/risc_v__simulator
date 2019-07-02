@@ -12,7 +12,7 @@ class MemoryAccess {
 
 public:
     Instruction buf;
-    void mem(const Instruction& inst);
+    void mem( Instruction inst);
 };
 
 

@@ -3,6 +3,7 @@
 //
 
 #include "Types.h"
+#include "Executor.h"
 
 /**
  *
@@ -224,15 +225,22 @@ void Decoder::decode (unsigned instruction) {
     switch (inst.type) {
         case R_type_:
             R_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.rd,inst.r_type);
+            inst.reg1_val=reg[inst.rs1];
+            inst.reg2_val=reg[inst.rs2];
             break;
         case I_type_ :
             I_type_decoder::decode(instruction,inst.rs1,inst.rd,inst.immediate,inst.i_type);
+            inst.reg1_val=reg[inst.rs1];
             break;
         case S_type_:
             S_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.s_type);
+            inst.reg1_val=reg[inst.rs1];
+            inst.reg2_val=reg[inst.rs2];
             break;
         case B_type_:
             B_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.b_type);
+            inst.reg1_val=reg[inst.rs1];
+            inst.reg2_val=reg[inst.rs2];
             break;
         case U_type_:
             U_type_decoder::decode(instruction,inst.immediate,inst.rd,inst.u_type);
@@ -241,6 +249,7 @@ void Decoder::decode (unsigned instruction) {
             J_type_decoder::decode(instruction,inst.immediate,inst.rd);
             break;
     }
+    
     buf=inst;
 }
 std::string type_name[6]{"R_type","I_type","S_type","B_type","U_type","J_type"};

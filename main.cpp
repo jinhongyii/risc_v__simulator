@@ -7,8 +7,8 @@
 #include "Types.h"
 
 int main () {
-//    std::ifstream f("../test/tak.data");
-    
+//    std::ifstream f("../test/array_test1.data");
+    std::ofstream debugFile("../debug");
     Preprocessor preprocessor(std::cin);
     preprocessor.preprocess();
     InstructionFetcher instructionFetcher;
@@ -19,13 +19,15 @@ int main () {
     int cnt=0;
     while(instructionFetcher.buf!=0xc68223) {
         instructionFetcher.IF();
-//        debugFile<<std::hex<<instructionFetcher.buf<<" ra:"<<reg[1]
-//        <<" a0:"<<reg[10]<<std::endl;
+        
         decoder.decode(instructionFetcher.buf);
-//        debugFile<<decoder.buf.to_string()<<std::endl;
+        
         executor.execute(decoder.buf);
         memoryAccess.mem(executor.buf);
         writeBack.wb(memoryAccess.buf);
+//        debugFile<<std::hex<<instructionFetcher.buf<<" ra:"<<reg[1]
+//                 <<" a0:"<<reg[10]<<std::endl;
+//        debugFile<<decoder.buf.to_string()<<std::endl;
         cnt++;
     }
     std::cout<<std::dec<<(((unsigned)reg[10])&255u);

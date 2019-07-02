@@ -9,40 +9,40 @@ void Executor::execute (Instruction inst) {
         case R_type_: {
             switch (inst.r_type) {
                 case ADD:
-                    reg[inst.rd] = reg[inst.rs1] + reg[inst.rs2];
+                    inst.result = inst.reg1_val + inst.reg2_val;
                     break;
                 case SUB:
-                    reg[inst.rd] = reg[inst.rs1] - reg[inst.rs2];
+                    inst.result = inst.reg1_val - inst.reg2_val;
                     break;
                 case SLT:
-                    reg[inst.rd] = reg[inst.rs1] < reg[inst.rs2];
+                    inst.result = inst.reg1_val < inst.reg2_val;
                     break;
                 case SLTU: {
-                    unsigned rs1u = reg[inst.rs1];
-                    unsigned rs2u = reg[inst.rs2];
-                    reg[inst.rd] = rs1u < rs2u;
+                    unsigned rs1u = inst.reg1_val;
+                    unsigned rs2u = inst.reg2_val;
+                    inst.result = rs1u < rs2u;
                 }
                     break;
                 case AND:
-                    reg[inst.rd] = reg[inst.rs1] & reg[inst.rs2];
+                    inst.result = inst.reg1_val & inst.reg2_val;
                     break;
                 case OR:
-                    reg[inst.rd] = reg[inst.rs1] | reg[inst.rs2];
+                    inst.result = inst.reg1_val | inst.reg2_val;
                     break;
                 case XOR:
-                    reg[inst.rd] = reg[inst.rs1] ^ reg[inst.rs2];
+                    inst.result = inst.reg1_val ^ inst.reg2_val;
                     break;
                 case SLL:
-                    reg[inst.rd] = reg[inst.rs1] << reg[inst.rs2];
+                    inst.result = inst.reg1_val << inst.reg2_val;
                     break;
                 case SRL: {
-                    unsigned rs1u = reg[inst.rs1];
-                    unsigned rs2u = reg[inst.rs2];
-                    reg[inst.rd] = rs1u >> rs2u;
+                    unsigned rs1u = inst.reg1_val;
+                    unsigned rs2u = inst.reg2_val;
+                    inst.result = rs1u >> rs2u;
                 }
                     break;
                 case SRA:
-                    reg[inst.rd] = reg[inst.rs1] >> reg[inst.rs2];
+                    inst.result = inst.reg1_val >> inst.reg2_val;
                     break;
             }
         }
@@ -51,52 +51,52 @@ void Executor::execute (Instruction inst) {
         case I_type_: {
             switch (inst.i_type) {
                 case ADDI:
-                    reg[inst.rd] = reg[inst.rs1] + inst.immediate;
+                    inst.result = inst.reg1_val + inst.immediate;
                     break;
                 case SLTI:
-                    reg[inst.rd] = reg[inst.rs1] < inst.immediate;
+                    inst.result = inst.reg1_val < inst.immediate;
                     break;
                 case SLTIU: {
                     unsigned immu = inst.immediate;
-                    reg[inst.rd] = reg[inst.rs1] < immu;
+                    inst.result = inst.reg1_val < immu;
                 }
                     break;
                 case ANDI:
-                    reg[inst.rd] = reg[inst.rs1] & inst.immediate;
+                    inst.result = inst.reg1_val & inst.immediate;
                     break;
                 case ORI:
-                    reg[inst.rd] = reg[inst.rs1] | inst.immediate;
+                    inst.result = inst.reg1_val | inst.immediate;
                     break;
                 case XORI:
-                    reg[inst.rd] = reg[inst.rs1] ^ inst.immediate;
+                    inst.result = inst.reg1_val ^ inst.immediate;
                     break;
                 case SLLI: {
                     unsigned immu = inst.immediate;
-                    reg[inst.rd] = reg[inst.rs1] << ((immu << 27) >> 27);
+                    inst.result = inst.reg1_val << ((immu << 27) >> 27);
                 }
                     break;
                 case SRLI: {
                     unsigned immu = inst.immediate;
-                    unsigned rs1u = reg[inst.rs1];
-                    reg[inst.rd] = rs1u >> ((immu << 27) >> 27);
+                    unsigned rs1u = inst.reg1_val;
+                    inst.result = rs1u >> ((immu << 27) >> 27);
                 }
                     break;
                 case SRAI: {
                     unsigned immu = inst.immediate;
-                    reg[inst.rd] = reg[inst.rs1] >> ((immu << 27) >> 27);
+                    inst.result = inst.reg1_val >> ((immu << 27) >> 27);
             
                 }
                     break;
                 case JALR:
-                    reg[inst.rd] = pc + 4;
-                    pc = (inst.immediate + reg[inst.rs1]) & (-2);
+                    inst.result = pc + 4;
+                    pc = (inst.immediate + inst.reg1_val) & (-2);
                     break;
                 case LW:
                 case LH:
                 case LB:
                 case LHU:
                 case LBU:
-                    inst.immediate += reg[inst.rs1];
+                    inst.immediate += inst.reg1_val;
                     break;
         
             }
@@ -108,43 +108,43 @@ void Executor::execute (Instruction inst) {
             break;
         case U_type_:
             if (inst.u_type == LUI) {
-                reg[inst.rd] = inst.immediate ;
+                inst.result = inst.immediate ;
             } else {
-                reg[inst.rd] = pc + inst.immediate;
+                inst.result = pc + inst.immediate;
             }
             pc += 4;
             break;
         case J_type_:
-            reg[inst.rd] = pc + 4;
+            inst.result = pc + 4;
             pc += inst.immediate;
             
             break;
         case B_type_:
             switch (inst.b_type) {
                 case BEQ:
-                    if (reg[inst.rs1] == reg[inst.rs2]) {
+                    if (inst.reg1_val == inst.reg2_val) {
                         pc += inst.immediate;
                     } else {
                         pc+=4;
                     }
                     break;
                 case BNE:
-                    if (reg[inst.rs1] != reg[inst.rs2]) {
+                    if (inst.reg1_val != inst.reg2_val) {
                         pc += inst.immediate;
                     } else {
                         pc+=4;
                     }
                     break;
                 case BLT:
-                    if (reg[inst.rs1] < reg[inst.rs2]) {
+                    if (inst.reg1_val < inst.reg2_val) {
                         pc += inst.immediate;
                     } else {
                         pc+=4;
                     }
                     break;
                 case BLTU: {
-                    unsigned rs1u = reg[inst.rs1];
-                    unsigned rs2u = reg[inst.rs2];
+                    unsigned rs1u = inst.reg1_val;
+                    unsigned rs2u = inst.reg2_val;
                     if (rs1u < rs2u) {
                         pc += inst.immediate;
                     } else {
@@ -153,15 +153,15 @@ void Executor::execute (Instruction inst) {
                 }
                     break;
                 case BGE:
-                    if (reg[inst.rs1] >= reg[inst.rs2]) {
+                    if (inst.reg1_val >= inst.reg2_val) {
                         pc += inst.immediate;
                     } else {
                         pc+=4;
                     }
                     break;
                 case BGEU: {
-                    unsigned rs1u = reg[inst.rs1];
-                    unsigned rs2u = reg[inst.rs2];
+                    unsigned rs1u = inst.reg1_val;
+                    unsigned rs2u = inst.reg2_val;
                     if (rs1u >= rs2u) {
                         pc += inst.immediate;
                     } else {
@@ -172,7 +172,7 @@ void Executor::execute (Instruction inst) {
             }
             break;
         case S_type_:
-            inst.immediate+=reg[inst.rs1];
+            inst.immediate+=inst.reg1_val;
             pc+=4;
             break;
     }
@@ -183,5 +183,3 @@ void Executor::execute (Instruction inst) {
 int pc;
 int reg[32];
 char memory[4194304];
-bool data_hazard=false;
-bool structure_hazard=false;

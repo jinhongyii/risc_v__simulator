@@ -46,7 +46,7 @@ struct Instruction{
     B_type b_type;
     U_type u_type;
     J_type j_type;
-    int rs1,rs2,rd,immediate;
+    int rs1,rs2,rd,immediate,result,reg1_val,reg2_val;
     std::string to_string(){
         std::stringstream sstream;
         switch (type) {

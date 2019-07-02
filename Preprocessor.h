@@ -8,9 +8,9 @@
 #include <fstream>
 #include "Executor.h"
 class Preprocessor {
-
+    std::istream& io;
 public:
-    Preprocessor(){
+    Preprocessor(std::istream& ios):io(ios){
     
     }
     void preprocess();

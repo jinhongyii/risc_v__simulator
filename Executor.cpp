@@ -123,16 +123,22 @@ void Executor::execute (Instruction inst) {
                 case BEQ:
                     if (reg[inst.rs1] == reg[inst.rs2]) {
                         pc += inst.immediate;
+                    } else {
+                        pc+=4;
                     }
                     break;
                 case BNE:
                     if (reg[inst.rs1] != reg[inst.rs2]) {
                         pc += inst.immediate;
+                    } else {
+                        pc+=4;
                     }
                     break;
                 case BLT:
                     if (reg[inst.rs1] < reg[inst.rs2]) {
                         pc += inst.immediate;
+                    } else {
+                        pc+=4;
                     }
                     break;
                 case BLTU: {
@@ -140,12 +146,16 @@ void Executor::execute (Instruction inst) {
                     unsigned rs2u = reg[inst.rs2];
                     if (rs1u < rs2u) {
                         pc += inst.immediate;
+                    } else {
+                        pc+=4;
                     }
                 }
                     break;
                 case BGE:
                     if (reg[inst.rs1] >= reg[inst.rs2]) {
                         pc += inst.immediate;
+                    } else {
+                        pc+=4;
                     }
                     break;
                 case BGEU: {
@@ -153,6 +163,8 @@ void Executor::execute (Instruction inst) {
                     unsigned rs2u = reg[inst.rs2];
                     if (rs1u >= rs2u) {
                         pc += inst.immediate;
+                    } else {
+                        pc+=4;
                     }
                 }
                     break;

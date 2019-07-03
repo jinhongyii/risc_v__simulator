@@ -12,6 +12,6 @@ void TwoLevelAdaptive::update (bool jump) {
 
 bool TwoLevelAdaptive::jumpOrNot () {
 //    return counter[(prev1<<1)+prev2].jumpOrNot();
-    return true;
+    return false;
 }
 

@@ -13,8 +13,9 @@ public:
     int buf=0;
     int pc_;
     bool ready=false;
+    
     InstructionFetcher()= default;
-    void IF (bool busy);
+    void IF (bool busy , bool &jump , int branchAddress=-1);
 };
 
 

@@ -284,6 +284,11 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
             if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
                 inst.reg1_val = reg[inst.rs1];
                 inst.reg2_val = reg[inst.rs2];
+                if(!branchPredictorMap.count(pc)){
+                    branchPredictorMap.insert(std::make_pair(pc,TwoLevelAdaptive(inst.immediate+pc)));
+                }
+                branchAddress=pc;
+                jump=true;
             } else {
                 this->busy=true;
                 this->ready=false;
@@ -314,3 +319,4 @@ std::string U_type_name[]={"LUI","AUIPC"};
 std::string regname[]={"zero","ra","sp","gp","tp","t0","t1","t2","s0","s1","a0","a1","a2",
                        "a3","a4","a5","a6","a7","s2","s3","s4","s5","s6","s7","s8","s9","s10","s11"
         ,"t3","t4","t5","t6"};
+std::unordered_map<int,TwoLevelAdaptive> branchPredictorMap;

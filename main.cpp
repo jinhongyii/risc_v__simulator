@@ -7,9 +7,9 @@
 #include "Types.h"
 
 int main () {
-//    std::ifstream f("../test/pi.data");
+    std::ifstream f("../test/basicopt1.data");
 //    std::ofstream debugFile("../debug");
-    Preprocessor preprocessor(std::cin);
+    Preprocessor preprocessor(f);
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     preprocessor.preprocess();
@@ -33,7 +33,7 @@ int main () {
 //            debugFile<<i<<" ";
 //        }
 //        debugFile<<std::endl<<std::endl;
-        instructionFetcher.IF(decoder.busy);
+        instructionFetcher.IF(decoder.busy , decoder.jump , decoder.branchAddress);
     
         cnt++;
     }

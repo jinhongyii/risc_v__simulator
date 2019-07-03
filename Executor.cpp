@@ -131,51 +131,109 @@ void Executor::execute (Instruction inst , bool busy , int &instruction , bool r
             pc = inst.pc+inst.immediate;
             instruction=0;
             break;
-        case B_type_:
+        case B_type_: {
+            TwoLevelAdaptive& pred=branchPredictorMap.at(inst.pc);
+            bool jumpPrefetch=pred.jumpOrNot();
             switch (inst.b_type) {
                 case BEQ:
-                    if (inst.reg1_val == inst.reg2_val) {
-                        pc = inst.pc+inst.immediate;
-                        instruction=0;
+                    if (inst.reg1_val == inst.reg2_val ) {
+                        if(!jumpPrefetch){
+                            instruction = 0;
+                            pc=inst.pc+inst.immediate;
+                        } else {
+                            pc = inst.pc + inst.immediate + 4;
+                        }
+                    } else {
+                        if (jumpPrefetch) {
+                            instruction=0;
+                        }
                     }
+                    pred.update(inst.reg1_val == inst.reg2_val);
                     break;
                 case BNE:
-                    if (inst.reg1_val != inst.reg2_val) {
-                        pc = inst.pc+inst.immediate;
-                        instruction=0;
+                    if (inst.reg1_val != inst.reg2_val)  {
+                        if(!jumpPrefetch){
+                            instruction = 0;
+                            pc=inst.pc+inst.immediate;
+                        } else {
+                            pc = inst.pc + inst.immediate + 4;
+                        }
+                    } else {
+                        if (jumpPrefetch) {
+                            instruction=0;
+                        }
                     }
+                    pred.update(inst.reg1_val != inst.reg2_val);
                     break;
                 case BLT:
                     if (inst.reg1_val < inst.reg2_val) {
-                        pc = inst.pc+inst.immediate;
-                        instruction=0;
+                        if(!jumpPrefetch){
+                            instruction = 0;
+                            pc=inst.pc+inst.immediate;
+                        } else {
+                            pc = inst.pc + inst.immediate + 4;
+                        }
+                    } else {
+                        if (jumpPrefetch) {
+                            instruction=0;
+                        }
                     }
+                    pred.update(inst.reg1_val < inst.reg2_val);
                     break;
                 case BLTU: {
                     unsigned rs1u = inst.reg1_val;
                     unsigned rs2u = inst.reg2_val;
-                    if (rs1u < rs2u) {
-                        pc = inst.pc+inst.immediate;
-                        instruction=0;
+                    if (rs1u < rs2u)  {
+                        if(!jumpPrefetch){
+                            instruction = 0;
+                            pc=inst.pc+inst.immediate;
+                        } else {
+                            pc = inst.pc + inst.immediate + 4;
+                        }
+                    } else {
+                        if (jumpPrefetch) {
+                            instruction=0;
+                        }
                     }
+                    pred.update(rs1u < rs2u);
                 }
                     break;
                 case BGE:
                     if (inst.reg1_val >= inst.reg2_val) {
-                        pc = inst.pc+inst.immediate;
-                        instruction=0;
+                        if(!jumpPrefetch){
+                            instruction = 0;
+                            pc=inst.pc+inst.immediate;
+                        } else {
+                            pc = inst.pc + inst.immediate + 4;
+                        }
+                    } else {
+                        if (jumpPrefetch) {
+                            instruction=0;
+                        }
                     }
+                    pred.update(inst.reg1_val >= inst.reg2_val);
                     break;
                 case BGEU: {
                     unsigned rs1u = inst.reg1_val;
                     unsigned rs2u = inst.reg2_val;
                     if (rs1u >= rs2u) {
-                        pc = inst.pc+inst.immediate;
-                        instruction=0;
+                        if(!jumpPrefetch){
+                            instruction = 0;
+                            pc=inst.pc+inst.immediate;
+                        } else {
+                            pc = inst.pc + inst.immediate + 4;
+                        }
+                    } else {
+                        if (jumpPrefetch) {
+                            instruction=0;
+                        }
                     }
+                    pred.update(rs1u >= rs2u);
                 }
+                    
                     break;
             }
+        }
             break;
         case S_type_:
             inst.immediate+=inst.reg1_val;

@@ -247,10 +247,10 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
     switch (inst.type) {
         case R_type_:
             R_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.rd,inst.r_type);
-            if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
+            if(!access[inst.rs1] && !access[inst.rs2]) {
                 inst.reg1_val = reg[inst.rs1];
                 inst.reg2_val = reg[inst.rs2];
-                regToChange.push_back(inst.rd);
+                access[inst.rd]++;
             } else {
                 this->busy=true;
                 this->ready=false;
@@ -259,9 +259,9 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
             break;
         case I_type_ :
             I_type_decoder::decode(instruction,inst.rs1,inst.rd,inst.immediate,inst.i_type);
-            if(!find(regToChange,inst.rs1)) {
+            if(!access[inst.rs1]) {
                 inst.reg1_val = reg[inst.rs1];
-                regToChange.push_back(inst.rd);
+                access[inst.rd]++;
             } else {
                 this->busy=true;
                 this->ready=false;
@@ -270,7 +270,7 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
             break;
         case S_type_:
             S_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.s_type);
-            if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
+            if(!access[inst.rs1] && !access[inst.rs2]) {
                 inst.reg1_val = reg[inst.rs1];
                 inst.reg2_val = reg[inst.rs2];
             } else {
@@ -281,7 +281,7 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
             break;
         case B_type_:
             B_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.b_type);
-            if(!find(regToChange,inst.rs1) && !find(regToChange,inst.rs2)) {
+            if(!access[inst.rs1] && !access[inst.rs2]) {
                 inst.reg1_val = reg[inst.rs1];
                 inst.reg2_val = reg[inst.rs2];
                 branchAddress=pc;
@@ -295,11 +295,11 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
             break;
         case U_type_:
             U_type_decoder::decode(instruction,inst.immediate,inst.rd,inst.u_type);
-            regToChange.push_back(inst.rd);
+            access[inst.rd]++;
             break;
         case J_type_:
             J_type_decoder::decode(instruction,inst.immediate,inst.rd);
-            regToChange.push_back(inst.rd);
+            access[inst.rd]++;
             break;
     }
     buf=inst;

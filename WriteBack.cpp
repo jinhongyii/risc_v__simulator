@@ -14,7 +14,7 @@ void WriteBack::wb (const Instruction &inst , bool ready) {
     }
     if (inst.type == R_type_ || inst.type == I_type_ || inst.type == U_type_ || inst.type == J_type_) {
         reg[inst.rd]=inst.result;
-        regToChange.pop_front();
+        access[inst.rd]--;
     }
     reg[0]=0;
     

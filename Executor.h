@@ -12,7 +12,8 @@
 extern int pc;
 extern int reg[32];
 extern char memory[4194304];
-extern std::list<int> regToChange;
+
+extern int access[32];
 class Executor {
 
 public:

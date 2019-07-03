@@ -247,4 +247,4 @@ void Executor::execute (Instruction &inst , bool busy , int &instruction , bool 
 int pc;
 int reg[32];
 char memory[4194304];
-std::list<int> regToChange;
+int access[32];

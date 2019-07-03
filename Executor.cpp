@@ -4,7 +4,7 @@
 
 #include "Executor.h"
 
-void Executor::execute (Instruction inst , bool busy , int &instruction , bool ready) {
+void Executor::execute (Instruction &inst , bool busy , int &instruction , bool ready) {
     this->busy=false;
     if (!ready) {
         this->ready=false;

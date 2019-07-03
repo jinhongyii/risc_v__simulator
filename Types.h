@@ -5,7 +5,7 @@
 #ifndef RISC_V__SIMULATOR_TYPES_H
 #define RISC_V__SIMULATOR_TYPES_H
 #include "predictor/TwoLevelAdaptive.h"
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <sstream>
 enum Types{
@@ -109,7 +109,7 @@ public:
     static void decode (unsigned  instruction ,int& immediate,int& rd);
 };
 Types getType (unsigned instruction);
-extern std::unordered_map<int,TwoLevelAdaptive> branchPredictorMap;
+extern std::map<int,TwoLevelAdaptive> branchPredictorMap;
 class Decoder{
 
 public:

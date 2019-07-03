@@ -22,7 +22,7 @@ public:
     Executor(){
         buf.valid=false;
     }
-    void execute (Instruction inst , bool busy , int &instruction , bool ready);
+    void execute (Instruction &inst , bool busy , int &instruction , bool ready);
 };
 
 

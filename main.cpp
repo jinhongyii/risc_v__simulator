@@ -38,7 +38,7 @@ int main () {
     
         cnt++;
     }
-    std::cout<<std::dec<<(((unsigned)reg[10])&255u)<<std::endl;
-    std::cout<<cnt;
+    std::cout<<std::dec<<(((unsigned)reg[10])&255u);
+//    std::cout<<cnt;
     
 }

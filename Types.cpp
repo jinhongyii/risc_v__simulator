@@ -219,15 +219,33 @@ Types getType (unsigned instruction) {
     return type;
 }
 
-bool find(const std::list<int>& ls,int target){
-    for (auto i:ls) {
-        if (i == target) {
+
+bool check (int rs , Instruction &ex_buf , Instruction &mem_buf , bool ex_ready , bool mem_ready , int &result) {
+    if (!access[rs]) {
+        result = reg[rs];
+        return true;
+    
+    } else if(ex_buf.rd==rs && ex_buf.valid && ex_ready){
+        if (ex_buf.type != I_type_) {
+            result= ex_buf.result;
             return true;
+        } else if (ex_buf.i_type < LB || ex_buf.i_type > LHU) {
+            result= ex_buf.result;
+            return true;
+        } else {
+            return false;
         }
+    }
+    if (mem_buf.rd == rs && mem_buf.valid && mem_ready) {
+            result = (mem_buf.rd==0)?0:mem_buf.result;
+            return true;
+        
     }
     return false;
 }
-void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
+void
+Decoder::decode (unsigned instruction , bool busy , int pc , bool ready , Instruction &ex_buf , Instruction &mem_buf ,
+                 bool ex_ready , bool mem_ready) {
     this->busy=false;
     if (!ready) {
         this->ready=false;
@@ -245,45 +263,53 @@ void Decoder::decode (unsigned instruction , bool busy , int pc , bool ready) {
     Instruction inst;
     inst.type=getType(instruction);
     switch (inst.type) {
-        case R_type_:
-            R_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.rd,inst.r_type);
-            if(!access[inst.rs1] && !access[inst.rs2]) {
-                inst.reg1_val = reg[inst.rs1];
-                inst.reg2_val = reg[inst.rs2];
+        case R_type_: {
+            R_type_decoder::decode(instruction , inst.rs1 , inst.rs2 , inst.rd , inst.r_type);
+            int tmp1 ,tmp2;
+            if (check(inst.rs1 , ex_buf , mem_buf , ex_ready , mem_ready , tmp1) && check(inst.rs2 , ex_buf , mem_buf , ex_ready , mem_ready , tmp2)) {
+                inst.reg1_val = tmp1;
+                inst.reg2_val = tmp2;
                 access[inst.rd]++;
             } else {
-                this->busy=true;
-                this->ready=false;
+        
+                this->busy = true;
+                this->ready = false;
                 return;
             }
+        }
             break;
-        case I_type_ :
-            I_type_decoder::decode(instruction,inst.rs1,inst.rd,inst.immediate,inst.i_type);
-            if(!access[inst.rs1]) {
-                inst.reg1_val = reg[inst.rs1];
+        case I_type_ : {
+            I_type_decoder::decode(instruction , inst.rs1 , inst.rd , inst.immediate , inst.i_type);
+            int tmp1 ;
+            if (check(inst.rs1 , ex_buf , mem_buf , ex_ready , mem_ready , tmp1)) {
+                inst.reg1_val = tmp1;
                 access[inst.rd]++;
             } else {
-                this->busy=true;
-                this->ready=false;
+                this->busy = true;
+                this->ready = false;
                 return;
             }
+        }
             break;
-        case S_type_:
-            S_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.s_type);
-            if(!access[inst.rs1] && !access[inst.rs2]) {
-                inst.reg1_val = reg[inst.rs1];
-                inst.reg2_val = reg[inst.rs2];
+        case S_type_: {
+            S_type_decoder::decode(instruction , inst.rs1 , inst.rs2 , inst.immediate , inst.s_type);
+            int tmp1,tmp2;
+            if (check(inst.rs1 , ex_buf , mem_buf , ex_ready , mem_ready , tmp1) && check(inst.rs2 , ex_buf , mem_buf , ex_ready , mem_ready , tmp2)) {
+                inst.reg1_val = tmp1;
+                inst.reg2_val = tmp2;
             } else {
-                this->busy=true;
-                this->ready=false;
+                this->busy = true;
+                this->ready = false;
                 return;
             }
+        }
             break;
         case B_type_:
             B_type_decoder::decode(instruction,inst.rs1,inst.rs2,inst.immediate,inst.b_type);
-            if(!access[inst.rs1] && !access[inst.rs2]) {
-                inst.reg1_val = reg[inst.rs1];
-                inst.reg2_val = reg[inst.rs2];
+            int tmp1,tmp2;
+            if(check(inst.rs1 , ex_buf , mem_buf , ex_ready , mem_ready , tmp1) && check(inst.rs2 , ex_buf , mem_buf , ex_ready , mem_ready , tmp2)) {
+                inst.reg1_val = tmp1;
+                inst.reg2_val = tmp2;
                 branchAddress=pc;
                 jumpAddress=inst.immediate+pc;
                 jump=true;

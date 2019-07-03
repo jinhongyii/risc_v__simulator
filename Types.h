@@ -17,7 +17,7 @@ enum R_type {
 };
 extern std::string R_type_name[];
 enum I_type{
-    SLLI,SRLI,SRAI,JALR,LB,LH,LW,LBU,LHU,ADDI,SLTI,SLTIU,XORI,ORI,ANDI
+    SLLI=0,SRLI,SRAI,JALR,LB,LH,LW,LBU,LHU,ADDI,SLTI,SLTIU,XORI,ORI,ANDI
 };
 extern std::string I_type_name[];
 enum S_type{
@@ -47,7 +47,7 @@ struct Instruction{
     B_type b_type;
     U_type u_type;
     J_type j_type;
-    int rs1,rs2,rd,immediate,result,reg1_val,reg2_val,pc,valid=true;
+    int rs1=-1,rs2=-1,rd=-1,immediate,result,reg1_val,reg2_val,pc=-1,valid=true;
     std::string to_string(){
         std::stringstream sstream;
         switch (type) {
@@ -122,7 +122,8 @@ public:
     Decoder(){
         buf.valid=false;
     }
-    void decode (unsigned instruction , bool busy , int pc , bool ready);
+    void decode (unsigned instruction , bool busy , int pc , bool ready , Instruction &ex_buf , Instruction &mem_buf ,
+                 bool ex_ready , bool mem_ready);
 };
 
 #endif //RISC_V__SIMULATOR_TYPES_H

@@ -7,9 +7,9 @@
 #include "Types.h"
 
 int main () {
-//    std::ifstream f("../test/pi.data");
+    std::ifstream f("../test/pi.data");
 //    std::ofstream debugFile("../debug");
-    Preprocessor preprocessor(std::cin);
+    Preprocessor preprocessor(f);
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     preprocessor.preprocess();
@@ -24,7 +24,8 @@ int main () {
         writeBack.wb(memoryAccess.buf , memoryAccess.ready);
         memoryAccess.mem(executor.buf , writeBack.busy , executor.ready);
         executor.execute(decoder.buf , memoryAccess.busy , instructionFetcher.buf , decoder.ready);
-        decoder.decode(instructionFetcher.buf , executor.busy , instructionFetcher.pc_ , instructionFetcher.ready);
+        decoder.decode(instructionFetcher.buf , executor.busy , instructionFetcher.pc_ , instructionFetcher.ready ,
+                       executor.buf , memoryAccess.buf , executor.ready , memoryAccess.ready);
 //        debugFile<<std::hex<<instructionFetcher.buf<<" ra:"<<reg[1]
 //                 <<" a0:"<<reg[10]<<std::endl;
 //        debugFile<<decoder.buf.to_string()<<std::endl;
@@ -37,6 +38,7 @@ int main () {
     
         cnt++;
     }
-    std::cout<<std::dec<<(((unsigned)reg[10])&255u);
+    std::cout<<std::dec<<(((unsigned)reg[10])&255u)<<std::endl;
+    std::cout<<cnt;
     
 }

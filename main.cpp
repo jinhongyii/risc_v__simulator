@@ -33,7 +33,7 @@ int main () {
 //            debugFile<<i<<" ";
 //        }
 //        debugFile<<std::endl<<std::endl;
-        instructionFetcher.IF(decoder.busy , decoder.jump , decoder.branchAddress);
+        instructionFetcher.IF(decoder.busy , decoder.jump , decoder.branchAddress , decoder.jumpAddress);
     
         cnt++;
     }

@@ -15,7 +15,7 @@ public:
     bool ready=false;
     
     InstructionFetcher()= default;
-    void IF (bool busy , bool &jump , int branchAddress=-1);
+    void IF (bool busy , bool &jump , int branchAddress = -1 , int jumpAddress=-1);
 };
 
 

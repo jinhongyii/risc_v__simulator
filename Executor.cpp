@@ -132,7 +132,7 @@ void Executor::execute (Instruction &inst , bool busy , int &instruction , bool 
             instruction=0;
             break;
         case B_type_: {
-            TwoLevelAdaptive& pred=branchPredictorMap.at(inst.pc);
+            TwoLevelAdaptive& pred=branchPredictorMap[(inst.pc>>2)%16];
             bool jumpPrefetch=pred.jumpOrNot();
             switch (inst.b_type) {
                 case BEQ:

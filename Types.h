@@ -109,7 +109,7 @@ public:
     static void decode (unsigned  instruction ,int& immediate,int& rd);
 };
 Types getType (unsigned instruction);
-extern std::map<int,TwoLevelAdaptive> branchPredictorMap;
+extern TwoLevelAdaptive branchPredictorMap[16];
 class Decoder{
 
 public:
@@ -118,6 +118,7 @@ public:
     bool ready=true;
     bool jump;
     int branchAddress;
+    int jumpAddress;
     Decoder(){
         buf.valid=false;
     }

@@ -4,15 +4,15 @@
 
 #include "InstructionFetcher.h"
 
-void InstructionFetcher::IF (bool busy , bool &jump , int branchAddress) {
+void InstructionFetcher::IF (bool busy , bool &jump , int branchAddress , int jumpAddress) {
     if (busy) {
         return;
     }
     if(jump) {
-        TwoLevelAdaptive pred = branchPredictorMap.at(branchAddress);
+        TwoLevelAdaptive pred = branchPredictorMap[(branchAddress>>2)%16];
         if ( pred.jumpOrNot()) {
-            memcpy(&buf , memory + pred.getjumpAddress() , 4);
-            this->pc_ = pred.getjumpAddress();
+            memcpy(&buf , memory + jumpAddress , 4);
+            this->pc_ = jumpAddress;
             ready = true;
             jump = false;
             return;

@@ -9,11 +9,11 @@
 
 class TwoLevelAdaptive :public predictor{
     char prev1=false,prev2=false;
-    int jumpAddress;
+    
     SaturatingCounter counter[4];
 public:
-    explicit TwoLevelAdaptive(int jumpAddress):jumpAddress(jumpAddress){}
-    inline int getjumpAddress(){ return jumpAddress;}
+    explicit TwoLevelAdaptive(){}
+    
     void update(bool jump)override ;
     bool jumpOrNot() override ;
 };
